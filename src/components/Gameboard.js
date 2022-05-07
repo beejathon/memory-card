@@ -7,7 +7,6 @@ const Gameboard = (props) => {
   return (
     <div className="Gameboard">
       {chars.map((char) => {
-        console.log(char.id)
         return (
           <Card 
             key={char.id}

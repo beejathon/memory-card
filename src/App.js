@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Gameboard from "./components/Gameboard";
+import Scoreboard from "./components/Scoreboard";
 import uniqid from "uniqid";
+import shuffle from "./helpers";
 import char1 from "./assets/1.webp";
 import char2 from "./assets/2.webp";
 import char3 from "./assets/3.webp";
@@ -16,6 +18,8 @@ import char12 from "./assets/12.webp";
 import './styles/App.css';
 
 function App() {
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
   const [charsArray, setCharsArray] = useState([
     {
       id: uniqid(),
@@ -89,29 +93,63 @@ function App() {
       name: 'Headache Lenin',
       clicked: false,
     },
-  ])
+  ]);
 
   const shuffleCards = () => {
     setCharsArray((prevState) => {
-      const newArray = prevState.sort(() => Math.random() - 0.5)
+      const newArray = shuffle(prevState);
       return newArray;
     })
   }
 
   const cardClick = (id) => {
-    console.log(id);
+    const clicked = checkChar(id);
+    if (clicked) {
+      resetGame();
+      return;
+    } else {
+      setCharsArray((prevState) => {
+        const newArray = prevState.map((char) => {
+          if (char.id === id) char.clicked = true;
+          return char;
+        })
+        return newArray;
+      })
+      tallyScores();
+      shuffleCards();
+    }
+  }
+
+  const tallyScores = () => {
+    setScore((prevState) => prevState + 1);
+    if (score >= highScore) {
+      setHighScore(score)
+    }
+  }
+
+  const checkChar = (id) => {
+    const char = charsArray.filter((char) => char.id === id);
+    if (char[0].clicked === true) {
+      return true;
+    } else return false;
+  }
+
+  const resetGame = () => {
+    alert('YA DONE GOOFED')
     setCharsArray((prevState) => {
       const newArray = prevState.map((char) => {
-        if (char.id === id) char.clicked = true;
+        char.clicked = false;
         return char;
       })
       return newArray;
     })
+    setScore(0);
     shuffleCards();
   }
 
   return (
     <div className="App">
+      <Scoreboard score={score} high={highScore} />
       <Gameboard chars={charsArray} click={cardClick} />
     </div>
   );
