@@ -1,4 +1,5 @@
 import React from "react";
+import '../styles/Scoreboard.css'
 
 const Scoreboard = (props) => {
   const { score, high } = props;

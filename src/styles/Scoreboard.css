@@ -1,0 +1,17 @@
+.Scoreboard {
+  display: flex;
+  justify-content: center;
+  margin: 4px;
+}
+
+.Scoreboard > button {
+  background-color: rgb(246, 224, 22);
+  border-radius: 10px;
+  height: 4rem;
+  width: 20rem;
+  margin: 4px;
+  color: red;
+  font-weight: 900;
+  font-size: medium;
+  border: none;
+}

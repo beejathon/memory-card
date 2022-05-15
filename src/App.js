@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Gameboard from "./components/Gameboard";
 import Scoreboard from "./components/Scoreboard";
+import Header from "./components/Header";
 import uniqid from "uniqid";
 import shuffle from "./helpers";
 import char1 from "./assets/1.webp";
@@ -95,6 +96,16 @@ function App() {
     },
   ]);
 
+  useEffect(() => {
+    if (score === 12) {
+      alert('YOU GOT YOURSELF A NICE MEMORY!');
+      setHighScore(score);
+      setScore(0);
+      resetCards();
+      shuffleCards();
+    }
+  }, [score])
+
   const shuffleCards = () => {
     setCharsArray((prevState) => {
       const newArray = shuffle(prevState);
@@ -108,23 +119,24 @@ function App() {
       resetGame();
       return;
     } else {
-      setCharsArray((prevState) => {
-        const newArray = prevState.map((char) => {
-          if (char.id === id) char.clicked = true;
-          return char;
-        })
-        return newArray;
-      })
-      tallyScores();
+      markCard(id);
+      setScore((prevState) => prevState + 1);
       shuffleCards();
     }
   }
 
-  const tallyScores = () => {
-    setScore((prevState) => prevState + 1);
-    if (score >= highScore) {
-      setHighScore(score)
-    }
+  const markCard = (id) => {
+    setCharsArray((prevState) => {
+      const newArray = prevState.map((char) => {
+        if (char.id === id) char.clicked = true;
+        return char;
+      })
+      return newArray;
+    })
+  }
+
+  const checkHighScore = () => {
+    if (score >= highScore) setHighScore(score);
   }
 
   const checkChar = (id) => {
@@ -135,7 +147,14 @@ function App() {
   }
 
   const resetGame = () => {
-    alert('YA DONE GOOFED')
+    alert('YA DONE GOOFED');
+    checkHighScore();
+    setScore(0);
+    resetCards();
+    shuffleCards();
+  }
+
+  const resetCards = () => {
     setCharsArray((prevState) => {
       const newArray = prevState.map((char) => {
         char.clicked = false;
@@ -143,12 +162,11 @@ function App() {
       })
       return newArray;
     })
-    setScore(0);
-    shuffleCards();
   }
 
   return (
     <div className="App">
+      <Header />
       <Scoreboard score={score} high={highScore} />
       <Gameboard chars={charsArray} click={cardClick} />
     </div>
